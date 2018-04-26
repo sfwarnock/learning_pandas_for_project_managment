@@ -17,6 +17,8 @@ data_file['Total Sum'] = data_file['Mar-18'] + data_file['Apr-18'] + data_file['
 data_file.loc['Total TPD'] = pd.Series(data_file[['Total Cost', 'Mar-18','Apr-18','May-18','Jun-18','Jul-18','Aug-18','Total Sum']].sum(), 
              index = ['Total Cost', 'Mar-18','Apr-18','May-18','Jun-18','Jul-18','Aug-18','Total Sum']);print(data_file)
 
+# Make cumalative dataseires for S graphs.
+
 # Make a list of all Cams.
 def cams():
     name = data_file.CAM.tolist()
@@ -28,3 +30,7 @@ def cams():
     print (cam)
     
 cams()
+
+# Generate datatables for each cam.
+
+# Graph dataset for each cam.
