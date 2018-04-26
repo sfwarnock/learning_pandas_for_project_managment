@@ -15,20 +15,23 @@ data_file['Total Sum'] = data_file['Mar-18'] + data_file['Apr-18'] + data_file['
 
 # Sum all coloumns with budgeted ammounts.
 data_file.loc['Total TPD'] = pd.Series(data_file[['Total Cost', 'Mar-18','Apr-18','May-18','Jun-18','Jul-18','Aug-18','Total Sum']].sum(), 
-             index = ['Total Cost', 'Mar-18','Apr-18','May-18','Jun-18','Jul-18','Aug-18','Total Sum']);print(data_file)
+             index = ['Total Cost', 'Mar-18','Apr-18','May-18','Jun-18','Jul-18','Aug-18','Total Sum'])
 
 # Make cumalative dataseires for S graphs.
+data_file.loc['Total Cumulative'] = pd.Series(data_file[['Mar-18']].sum(), 
+             index = ['Mar-18']);print(data_file)
 
 # Make a list of all Cams.
+
 def cams():
-    name = data_file.CAM.tolist()
+    name = data_file.CAM.dropna().tolist()
     cam = []
 
     for name in name:
         if name not in cam:
             cam.append(name)
-    print (cam)
-    
+    print(cam)     
+
 cams()
 
 # Generate datatables for each cam.
