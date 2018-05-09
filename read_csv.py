@@ -30,12 +30,19 @@ cam = []
 for name in name:
     if name not in cam:
         cam.append(name)
+print(cam)
         
 #Generate new dataframe for each cam.
-newDF0 = data_file[data_file.CAM == cam[0]]
-newDF1 = data_file[data_file.CAM == cam[1]]
-newDF2 = data_file[data_file.CAM == cam[2]]
-newDF3 = data_file[data_file.CAM == cam[3]]
+x = 0
+camDf = cam[0 + x]
 
+while True:
+    if camDf != cam[-1]:
+        camDf = data_file[data_file.CAM == camDf]
+        x += 1
+    else:
+        break
 
-print(cam)
+#y = data_file[data_file.CAM == cam[x + 1]]
+#newDF2 = data_file[data_file.CAM == cam[0 + x]]
+#newDF3 = data_file[data_file.CAM == cam[0 + x]]
