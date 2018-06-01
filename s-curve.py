@@ -14,4 +14,4 @@ import pandas as pd
 # Read file.
 data_file = pd.read_csv('cumalative_data1.csv').fillna(0)
 
-data_file.plot.line(x = 0, y = ['BCWS','BCWP','ACWP'])
+data_file.plot(x = 0, y = ['BCWS','BCWP','ACWP'], kind = 'line', title = "Project to-date")
