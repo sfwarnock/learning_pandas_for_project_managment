@@ -4,11 +4,27 @@ Created on Tue Mar 27 13:33:46 2018
 
 @author: Scott Warnock
 """
+# make list of CAMs for data processing
+#cam_group = data_file.groupby('CAM')
+#i = 0
+#for cam, group in cam_group:
+    #i = i + 1
+    #print('Cam', i, cam)
+    #print(group)
+    
+# Pviot table datatable by CAM and charge code.
+#table = pd.pivot_table(data_file, values = headerValues, index=['CAM','Charge Code','Value Type'])
+
+#table['Grand Total'] = table.sum(axis = 1); #print(table)
+
+#camTotals = table.sum(level = ['CAM','Value Type'])
+#print(camTotals)
+
 
 import pandas as pd
-#import numpy as np
-
-#import matplotlib.pyplot as plt
+import numpy as np
+import matplotlib.pyplot as plt
+import json
 
 # read data file.
 data_file = pd.read_csv('datafile.csv').fillna(0)
@@ -72,25 +88,83 @@ period_DataFrame.loc['Period SPI'] = period_SPI
 period_DataFrame.loc['Period CV'] = period_CV
 period_DataFrame.loc['Period CPI'] = period_CPI
 
-# Cumualtive Data
+# Cumultive Data
 cum_DataFrame = period_DataFrame
 
-cum_DataFrame.loc['Cumualative Total Cost'] = cum_DataFrame.loc['Period Total Cost'].cumsum()
-cum_DataFrame.loc['Cumualative Planned Value'] = cum_DataFrame.loc['Period Total Planned'].cumsum()
-cum_DataFrame.loc['Cumualative Earned Value'] = cum_DataFrame.loc['Period Total Earned'].cumsum()
+cum_DataFrame.loc['Cumulative Total Cost'] = cum_DataFrame.loc['Period Total Cost'].cumsum()
+cum_DataFrame.loc['Cumulative Planned Value'] = cum_DataFrame.loc['Period Total Planned'].cumsum()
+cum_DataFrame.loc['Cumulative Earned Value'] = cum_DataFrame.loc['Period Total Earned'].cumsum()
 
-# make list of CAMs for data processing
-cam_group = data_file.groupby('CAM')
-i = 0
-for cam, group in cam_group:
-    i = i + 1
-    #print('Cam', i, cam)
-    #print(group)
-    
-# Pviot table datatable by CAM and charge code.
-table = pd.pivot_table(data_file, values = headerValues, index=['CAM','Charge Code','Value Type'])
+cum_BCWP = cum_DataFrame.loc['Cumulative Earned Value', headerValues]
+cum_BCWS = cum_DataFrame.loc['Cumulative Planned Value', headerValues]
+cum_ACWP = cum_DataFrame.loc['Cumulative Total Cost', headerValues]
 
-table['Grand Total'] = table.sum(axis = 1); #print(table)
+cum_CV = cum_BCWP - cum_ACWP
+cum_CPI = cum_BCWP / cum_ACWP
 
-camTotals = table.sum(level = ['CAM','Value Type'])
-#print(camTotals)
+cum_SV = cum_BCWP - cum_BCWS
+cum_SPI = cum_BCWP / cum_BCWS
+
+cum_DataFrame.loc['SPI'] = cum_SPI
+cum_DataFrame.loc['SV'] = cum_SV
+
+cum_DataFrame.loc['CPI'] = cum_CPI
+cum_DataFrame.loc['CV'] = cum_CV
+
+# bcwr
+bac = cum_DataFrame['Total Cost'].sum()
+bcwp =cum_DataFrame.loc['Period Total Earned', 'Total Earned']
+percent_complete = bcwp / bac                  
+bcwr = bac - bcwp                                
+
+# eac
+acwp = cum_DataFrame.loc['Period Total Cost', 'Total Actual Cost']
+bcws = cum_DataFrame.loc['Period Total Planned', 'Total Planned']
+
+eac = acwp + bcwr                           # Estimate at complete
+tcpi = bac / eac                            # To Complete Perforamce Index
+
+project_CPI = bcwp / acwp
+project_SPI = bcwp / bcws
+project_CV = bcwp - acwp
+project_SV = bcwp - bcws
+
+performance_ETC = acwp + (bcwr * project_CPI)   # Ajusted EAC
+
+performance_EAC = acwp + performance_ETC        # Performance EAC
+
+performance_tpci = bac / performance_EAC
+
+varaince_at_complete = bac - eac
+
+
+fig, ax = plt.subplots()
+ax.plot(cum_ACWP, color = "Green")
+ax.plot(cum_BCWP, color = "Red")
+ax.plot(cum_BCWS, color = "Blue")
+
+ax.set(xlabel='Month', ylabel= '$', title= 'Project S-Curve')
+ax.legend()
+plt.show()
+
+ind = np.arange(len(period_BCWP))
+width = 0.25
+
+fig, ax = plt.subplots()
+
+bcwsBar = ax.bar(ind - width, period_BCWS, width, color = 'Red', label = 'Planned Value')
+bcwpBar = ax.bar(ind, period_BCWP, width, color = 'Blue', label = 'Earned Value')
+acwpBar = ax.bar(ind + width, period_ACWP, width, color = 'Green', label = 'Actual Cost')
+
+ax.set_ylabel('$')
+ax.set_xlabel('Month')
+ax.set_xticks(np.arange(len(headerValues)))
+ax.set_xticklabels(headerValues)
+ax.set_title('Monthly Planned, Earned, and Actual Cost')
+ax.legend()
+
+plt.show()
+
+period_DataFrame_json = period_DataFrame.to_json(orient = 'index')
+testload = json.loads(period_DataFrame_json)
+
