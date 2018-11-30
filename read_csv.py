@@ -171,8 +171,11 @@ width = 0.25
 
 vegetables = ["CPI", "SPI"]
 
-heatmap_CPI = cum_CPI.tolist()
-heatmap_SPI = cum_SPI.tolist()
+tolistcum_CPI = cum_CPI.tolist()
+tolistcum_SPI = cum_SPI.tolist()
+
+heatmap_CPI = [round(cpi,2) for cpi in tolistcum_CPI]
+heatmap_SPI = [round(spi,2) for spi in tolistcum_SPI]
 farmers = (headerValues)
 
 harvest = (heatmap_CPI, heatmap_SPI)
@@ -194,8 +197,7 @@ plt.setp(ax.get_xticklabels(), ha="right",
 # Loop over data dimensions and create text annotations.
 for i in range(len(vegetables)):
     for j in range(len(farmers)):
-        text = ax.text(j, i, harvest[i, j],
-                       ha="center", va="center", color="w")
+        text = ax.text(j, i, harvest[i, j], ha="center", va="center", color="w")
         
 ax.set_title("Harvest of local farmers (in tons/year)")
 fig.tight_layout()
