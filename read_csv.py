@@ -43,7 +43,7 @@ for columnHeaders in acwp_header:
         continue
 
 bcwp = data_file.loc[data_file['Value Type'] == 'BCWP']
-bcwp.loc['Period Total Earned', headerValues] = bcwp[headerValues].sum()    
+bcwp.loc['Period Total Earned', headerValues] = bcwp[headerValues].sum()   
 bcwp['Total Earned'] = bcwp.loc[:,headerValues].sum(axis=1)
 bcwp_header = bcwp.columns.values.tolist()
 for columnHeaders in bcwp_header:
@@ -88,6 +88,8 @@ period_DataFrame.loc['Period SPI'] = period_SPI
 period_DataFrame.loc['Period CV'] = period_CV
 period_DataFrame.loc['Period CPI'] = period_CPI
 
+curentMonth_ACWP = period_DataFrame.loc['Period Total Cost', headerValues[-1]]
+
 # Cumultive Data
 cum_DataFrame = period_DataFrame
 
@@ -117,26 +119,43 @@ bcwp =cum_DataFrame.loc['Period Total Earned', 'Total Earned']
 percent_complete = bcwp / bac                  
 bcwr = bac - bcwp                                
 
+cum_todateUI_table = {"Budget at Complete": bac, "BCWP": bcwp, "Percent Complete": percent_complete,
+                      "Bugeted Cost of Work Remaining": bcwr}
+
 # eac
 acwp = cum_DataFrame.loc['Period Total Cost', 'Total Actual Cost']
 bcws = cum_DataFrame.loc['Period Total Planned', 'Total Planned']
 
+cum_todateUI_table["BCWS"] = bcws
+cum_todateUI_table["ACWP"] = acwp
+
 eac = acwp + bcwr                           # Estimate at complete
 tcpi = bac / eac                            # To Complete Perforamce Index
+
+cum_todateUI_table["EAC"] = eac
+cum_todateUI_table["TCPI"] = tcpi
 
 project_CPI = bcwp / acwp
 project_SPI = bcwp / bcws
 project_CV = bcwp - acwp
 project_SV = bcwp - bcws
 
+cum_todateUI_table["CPI"] = project_CPI
+cum_todateUI_table["SPI"] = project_SPI
+cum_todateUI_table["CV"] = project_CV
+cum_todateUI_table["SV"] = project_SV
+
 performance_ETC = acwp + (bcwr * project_CPI)   # Ajusted EAC
+cum_todateUI_table["Performance ETC"] = performance_ETC
 
 performance_EAC = acwp + performance_ETC        # Performance EAC
+cum_todateUI_table["Performance EAC"] = performance_EAC
 
 performance_tpci = bac / performance_EAC
+cum_todateUI_table["Perfromance TCPI"] = performance_tpci
 
 varaince_at_complete = bac - eac
-
+cum_todateUI_table["VAC"] = varaince_at_complete
 
 fig, ax = plt.subplots()
 ax.plot(cum_ACWP, color = "Green")
@@ -149,6 +168,40 @@ plt.show()
 
 ind = np.arange(len(period_BCWP))
 width = 0.25
+
+vegetables = ["CPI", "SPI"]
+
+heatmap_CPI = cum_CPI.tolist()
+heatmap_SPI = cum_SPI.tolist()
+farmers = (headerValues)
+
+harvest = (heatmap_CPI, heatmap_SPI)
+
+fig, ax = plt.subplots()
+im = ax.imshow(harvest)
+
+# We want to show all ticks...
+ax.set_xticks(np.arange(len(farmers)))
+ax.set_yticks(np.arange(len(vegetables)))
+# ... and label them with the respective list entries
+ax.set_xticklabels(farmers)
+ax.set_yticklabels(vegetables)
+
+# Rotate the tick labels and set their alignment.
+plt.setp(ax.get_xticklabels(), ha="right",
+         rotation_mode="anchor")
+
+# Loop over data dimensions and create text annotations.
+for i in range(len(vegetables)):
+    for j in range(len(farmers)):
+        text = ax.text(j, i, harvest[i, j],
+                       ha="center", va="center", color="w")
+        
+ax.set_title("Harvest of local farmers (in tons/year)")
+fig.tight_layout()
+plt.show()
+
+
 
 fig, ax = plt.subplots()
 
@@ -165,6 +218,14 @@ ax.legend()
 
 plt.show()
 
-period_DataFrame_json = period_DataFrame.to_json(orient = 'index')
-testload = json.loads(period_DataFrame_json)
+periodArray_toJSON = cum_DataFrame.loc[cum_DataFrame.index.isin(['Period Total Planned', 'Period Total Earned', 
+                                                                 'Period Total Cost'])].to_json(orient = 'index')
 
+cumArray_toJSON = cum_DataFrame.loc[cum_DataFrame.index.isin(['Cumulative Planned Value', 'Cumulative Earned Value',
+                                                              'Cumulative Total Cost'])].to_json(orient = 'index')
+
+cumtojson = json.dumps(cum_todateUI_table, indent = 4)
+
+print(cumtojson)
+    
+    
