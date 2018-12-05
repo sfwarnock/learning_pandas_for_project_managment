@@ -54,10 +54,10 @@ period_BCWS = period_DataFrame.loc['Period Total Planned', headerValues]
 period_ACWP = period_DataFrame.loc['Period Total Cost', headerValues]
 
 #get CAM names
-cam_names = data_file['CAM'].drop_duplicates().to_dict()
+cam_names = period_DataFrame['CAM'].drop_duplicates().tolist()
 
-for name, data_file in cam_names.items():
-    cam_names[name] = pd.DataFrame()
+charge_codes = period_DataFrame.set_index('CAM')['Charge Code'].to_dict()
+
 
 # make list of CAMs for data processing
 #cam_group = data_file.groupby('CAM')
