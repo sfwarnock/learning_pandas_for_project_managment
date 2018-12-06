@@ -58,8 +58,7 @@ cam_names = data_file['CAM'].drop_duplicates().tolist()
 
 charge_codes = data_file['Charge Code'].drop_duplicates().tolist()
 
-codes_by_cam = dict(zip(cam_names, charge_codes))
-
+codes_by_cam = dict.fromkeys(cam_names, 0)
 
 
 
