@@ -56,7 +56,11 @@ period_ACWP = period_DataFrame.loc['Period Total Cost', headerValues]
 #get CAM names
 cam_names = data_file['CAM'].drop_duplicates().tolist()
 
-charge_codes = period_DataFrame.to_dict()
+charge_codes = data_file['Charge Code'].drop_duplicates().tolist()
+
+codes_by_cam = dict(zip(cam_names, charge_codes))
+
+
 
 
 # make list of CAMs for data processing
