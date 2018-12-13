@@ -8,7 +8,7 @@ Created on Tue Dec  4 06:46:12 2018
 import pandas as pd
 #import numpy as np
 #import matplotlib.pyplot as plt
-#import json
+import json
 
 # read data file.
 data_file = pd.read_csv('datafile.csv').fillna(0)
@@ -65,6 +65,10 @@ period_ACWP = period_DataFrame.loc['Period Total Cost', headerValues]
 unfiltered_camGroupByChargeCode = data_file.groupby('CAM')['Charge Code'].apply(list).to_dict()
 
 camByChargeCode = {cam: list(set(chargecode)) for cam, chargecode in unfiltered_camGroupByChargeCode.items()}
+
+with open('camByChargeCode.json', 'w') as outfile:
+    json.dump(camByChargeCode, outfile, sort_keys = True, indent = 4, ensure_ascii=False)
+
     
 # make list of CAMs for data processing
 #cam_group = data_file.groupby('CAM')
