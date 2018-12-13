@@ -65,11 +65,11 @@ period_ACWP = period_DataFrame.loc['Period Total Cost', headerValues]
 
 camGroupByChargeCode = data_file.groupby('CAM')['Charge Code'].apply(list).to_dict()
 
-CamAndChargeCode = {}
+result = {}
+for cam, chargecode in camGroupByChargeCode.items():
+    if chargecode not in result.values():
+        result[cam] = chargecode
 
-for cam, chargecode in camGroupByChargeCode:
-    if chargecode not in CamAndChargeCode.values():
-        CamAndChargeCode[cam] = chargecode
 
 # make list of CAMs for data processing
 #cam_group = data_file.groupby('CAM')
