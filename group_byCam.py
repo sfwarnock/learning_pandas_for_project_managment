@@ -67,7 +67,9 @@ camGroupByChargeCode = data_file.groupby('CAM')['Charge Code'].apply(list).to_di
 
 CamAndChargeCode = {}
 
-
+for cam, chargecode in camGroupByChargeCode:
+    if chargecode not in CamAndChargeCode.values():
+        CamAndChargeCode[cam] = chargecode
 
 # make list of CAMs for data processing
 #cam_group = data_file.groupby('CAM')
