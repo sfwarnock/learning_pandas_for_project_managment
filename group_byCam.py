@@ -54,14 +54,11 @@ period_BCWS = period_DataFrame.loc['Period Total Planned', headerValues]
 period_ACWP = period_DataFrame.loc['Period Total Cost', headerValues]
 
 period_EVMetrics = pd.concat([period_BCWP, period_BCWS, period_ACWP], axis=1).to_dict()
-
 with open('period_EVMetrics.json', 'w') as outfile:
     json.dump(period_EVMetrics, outfile, sort_keys = True, indent = 4, ensure_ascii=False)
 
 unfiltered_camGroupByChargeCode = data_file.groupby('CAM')['Charge Code'].apply(list).to_dict()
-
 camByChargeCode = {cam: list(set(chargecode)) for cam, chargecode in unfiltered_camGroupByChargeCode.items()}
-
 with open('camByChargeCode.json', 'w') as outfile:
     json.dump(camByChargeCode, outfile, sort_keys = True, indent = 4, ensure_ascii=False)
 
