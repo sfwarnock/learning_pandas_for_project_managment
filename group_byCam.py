@@ -53,15 +53,11 @@ period_BCWP = period_DataFrame.loc['Period Total Earned', headerValues]
 period_BCWS = period_DataFrame.loc['Period Total Planned', headerValues]
 period_ACWP = period_DataFrame.loc['Period Total Cost', headerValues]
 
-#get CAM names
-#cam_names = data_file['CAM'].drop_duplicates().tolist()
+period_EVMetrics = pd.concat([period_BCWP, period_BCWS, period_ACWP], axis=1).to_dict()
 
-#codes_by_cam = dict.fromkeys(cam_names, 0)
+with open('period_EVMetrics.json', 'w') as outfile:
+    json.dump(period_EVMetrics, outfile, sort_keys = True, indent = 4, ensure_ascii=False)
 
-#for charge_codes in cam_names:
-    #if data_file.iloc['CAM'] == codes_by_cam:
-        #dict[cam_names].append('Charge Code')
-        
 unfiltered_camGroupByChargeCode = data_file.groupby('CAM')['Charge Code'].apply(list).to_dict()
 
 camByChargeCode = {cam: list(set(chargecode)) for cam, chargecode in unfiltered_camGroupByChargeCode.items()}
@@ -69,11 +65,3 @@ camByChargeCode = {cam: list(set(chargecode)) for cam, chargecode in unfiltered_
 with open('camByChargeCode.json', 'w') as outfile:
     json.dump(camByChargeCode, outfile, sort_keys = True, indent = 4, ensure_ascii=False)
 
-    
-# make list of CAMs for data processing
-#cam_group = data_file.groupby('CAM')
-#cam_name = 0
-#for cam, group in cam_group:
-    #cam_name = cam_name + 1
-    #print('Cam', cam_name, cam)
-    #print(group)
