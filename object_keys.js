@@ -38,16 +38,14 @@ var cumBCWS = cum_DataTable["Cumulative Planned Value"];
 
 for (var dataBCWS in cumBCWS){
   var cumBCWSTable = document.getElementById('cumBCWSTable');
-  var cumBCWSTableData = document.getElementById('cumBCWSTableData');
+  var cumBCWSTableData = document.createElemnet('cumBCWSTableData');
 
   for(var bcwsKey in cumBCWS[dataBCWS]){
     var txt = document.createTextNode(bcwsKey);
-    
+    cumBCWSTableData.appendChild(txt);
   }
+  cumBCWSTable.appendChild(cumBCWSTableData);
 }
-
-
-
 
 console.log(Object.values(cum_DataTable));
 console.log(Object.keys(cum_DataTable));
