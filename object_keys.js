@@ -34,6 +34,10 @@ bcws.textContent = Object.keys(cum_DataTable)[1];
 var bcws = document.getElementById('acwp');
 bcws.textContent = Object.keys(cum_DataTable)[2];
 
+var cumBCWS = cum_DataTable["Cumulative Planned Value"];
+
+
+
 
 console.log(Object.values(cum_DataTable));
 console.log(Object.keys(cum_DataTable));
