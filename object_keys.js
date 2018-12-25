@@ -41,6 +41,7 @@ for (var dataBCWS in cumBCWS){
   var cumBCWSTableData = document.getElementById('cumBCWSTableData');
 
   for(var bcwsKey in cumBCWS[dataBCWS]){
+    var txt = document.createTextNode(bcwsKey);
     
   }
 }
