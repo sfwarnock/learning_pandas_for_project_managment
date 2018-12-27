@@ -38,7 +38,7 @@ var cumBCWS = cum_DataTable["Cumulative Planned Value"];
 
 for (var dataBCWS in cumBCWS){
   var cumBCWSTable = document.getElementById('cumBCWSTable');
-  var cumBCWSTableData = document.createElemnet('cumBCWSTableData');
+  var cumBCWSTableData = document.createElemnet("td");
 
   for(var bcwsKey in cumBCWS[dataBCWS]){
     var txt = document.createTextNode(bcwsKey);
